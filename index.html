@@ -396,13 +396,29 @@
     const tabelaVotosWrapperEl = document.getElementById("tabela-votos-wrapper");
     const btnSubmit = document.getElementById("btn-submit");
 
-    // Destaque visual da opção selecionada
-    document.querySelectorAll(".logo-option input[type='radio']").forEach(radio => {
-      radio.addEventListener("change", () => {
-        document.querySelectorAll(".logo-option").forEach(opt => opt.classList.remove("selected"));
-        radio.closest(".logo-option").classList.add("selected");
-      });
-    });
+    // Permitir trocar de opção e também desmarcar clicando de novo na mesma
+const radioButtons = document.querySelectorAll(".logo-option input[type='radio']");
+let ultimoRadioClicado = null;
+
+radioButtons.forEach(radio => {
+  // Destacar visualmente quando a seleção muda
+  radio.addEventListener("change", () => {
+    document.querySelectorAll(".logo-option").forEach(opt => opt.classList.remove("selected"));
+    radio.closest(".logo-option").classList.add("selected");
+  });
+
+  // Lidar com clique para permitir "desmarcar"
+  radio.addEventListener("click", (event) => {
+    if (ultimoRadioClicado === event.target) {
+      // Se clicar de novo no mesmo radio, desmarca
+      event.target.checked = false;
+      ultimoRadioClicado = null;
+      document.querySelectorAll(".logo-option").forEach(opt => opt.classList.remove("selected"));
+    } else {
+      ultimoRadioClicado = event.target;
+    }
+  });
+});
 
     // Envio do formulário
     form.addEventListener("submit", async function (event) {
