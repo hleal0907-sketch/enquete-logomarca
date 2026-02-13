@@ -1,0 +1,9 @@
+{
+  "name": "enquete-logomarca",
+  "version": "1.0.0",
+  "description": "Sistema de votação de logomarcas",
+  "main": "api/votos.js",
+  "dependencies": {
+    "mongodb": "^6.3.0"
+  }
+}
