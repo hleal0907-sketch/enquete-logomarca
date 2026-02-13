@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Nos ajude a escolher o novo layout do nosso escritório</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <style>
+    * {
+      box-sizing: border-box;
+      font-family: "Segoe UI", -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+    }
+
+    body {
+      margin: 0;
+      background: #f5f6fa;
+      color: #222;
+    }
+
+    .page {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 32px 16px 64px;
+    }
+
+    h1 {
+      font-size: 1.9rem;
+      text-align: center;
+      color: #143b63;
+      margin-bottom: 8px;
+    }
+
+    .subtitle {
+      text-align: center;
+      color: #555;
+      margin-bottom: 32px;
+      font-size: 0.95rem;
+    }
+
+    .card {
+      background: #fff;
+      border-radius: 10px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.06);
+      padding: 24px 20px;
+      margin-bottom: 24px;
+    }
+
+    .question {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: #143b63;
+      margin-bottom: 16px;
+      text-align: center;
+    }
+
+    .logos-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+      gap: 18px;
+      margin-bottom: 10px;
+    }
+
+    .logo-option {
+      border-radius: 8px;
+      border: 2px solid transparent;
+      padding: 12px;
+      background: #f9fafc;
+      cursor: pointer;
+      transition: all .2s ease;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+    }
+
+    .logo-option:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+    }
+
+    .logo-option.selected {
+      border-color: #143b63;
+      background: #eef4fb;
+    }
+
+    .logo-option input[type="radio"] {
+      margin-bottom: 8px;
+      accent-color: #143b63;
+    }
+
+    .logo-option img {
+      max-width: 100%;
+      max-height: 180px;
+      object-fit: contain;
+      margin-bottom: 8px;
+    }
+
+    .logo-label {
+      font-weight: 600;
+      color: #143b63;
+      margin-bottom: 4px;
+    }
+
+    .logo-desc {
+      font-size: 0.8rem;
+      color: #666;
+    }
+
+    .form-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+      margin-top: 16px;
+      align-items: center;
+    }
+
+    .form-group {
+      flex: 1 1 220px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    label {
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: #333;
+    }
+
+    input[type="text"],
+    input[type="number"] {
+      padding: 10px 12px;
+      border-radius: 6px;
+      border: 1px solid #cfd4dd;
+      font-size: 0.95rem;
+      outline: none;
+      transition: border-color .15s ease, box-shadow .15s ease;
+    }
+
+    input[type="text"]:focus,
+    input[type="number"]:focus {
+      border-color: #143b63;
+      box-shadow: 0 0 0 2px rgba(20,59,99,0.14);
+    }
+
+    input[type="number"] {
+      max-width: 130px;
+    }
+
+    small.hint {
+      font-size: 0.78rem;
+      color: #777;
+    }
+
+    .actions {
+      margin-top: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    button {
+      border: none;
+      border-radius: 999px;
+      padding: 10px 22px;
+      font-size: 0.95rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform .12s ease, box-shadow .12s ease, background .12s ease;
+    }
+
+    .btn-primary {
+      background: #143b63;
+      color: #fff;
+      box-shadow: 0 4px 10px rgba(20,59,99,0.3);
+    }
+
+    .btn-primary:hover:not(:disabled) {
+      background: #17426f;
+      transform: translateY(-1px);
+      box-shadow: 0 6px 14px rgba(20,59,99,0.32);
+    }
+
+    .btn-primary:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    .btn-secondary {
+      background: #e2e6ef;
+      color: #143b63;
+    }
+
+    .btn-secondary:hover {
+      background: #d4d9e4;
+    }
+
+    .message {
+      font-size: 0.9rem;
+      margin-left: 4px;
+    }
+
+    .message.error {
+      color: #b3261e;
+    }
+
+    .message.success {
+      color: #0a7d32;
+    }
+
+    #relatorio {
+      display: none;
+    }
+
+    .report-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+
+    .report-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 18px;
+      margin-top: 8px;
+    }
+
+    .report-card {
+      background: #f9fafc;
+      border-radius: 8px;
+      padding: 12px 12px 10px;
+      border: 1px solid #d3d8e2;
+    }
+
+    .report-title {
+      font-weight: 600;
+      color: #143b63;
+      margin-bottom: 4px;
+    }
+
+    .report-metric {
+      font-size: 0.9rem;
+      margin-bottom: 2px;
+      color: #333;
+    }
+
+    .report-metric span {
+      font-weight: 600;
+    }
+
+    details {
+      margin-top: 6px;
+      font-size: 0.85rem;
+    }
+
+    summary {
+      cursor: pointer;
+      color: #143b63;
+      font-weight: 600;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+      font-size: 0.82rem;
+    }
+
+    th, td {
+      padding: 4px 6px;
+      border-bottom: 1px solid #e0e4ee;
+      text-align: left;
+    }
+
+    th {
+      background: #eef1f8;
+    }
+
+    .loading {
+      display: inline-block;
+      width: 14px;
+      height: 14px;
+      border: 2px solid #fff;
+      border-top-color: transparent;
+      border-radius: 50%;
+      animation: spin 0.6s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    @media (max-width: 640px) {
+      h1 {
+        font-size: 1.5rem;
+      }
+      .card {
+        padding: 18px 14px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <h1>Nos ajude a escolher o novo layout do nosso escritório</h1>
+    <p class="subtitle">
+      Avalie qual das quatro opções de logomarca melhor representa os advogados Harisson e Grabrielle.
+      Sua opinião é muito importante para a decisão final.
+    </p>
+
+    <div class="card">
+      <p class="question">
+        Qual das quatro opções melhor representa os advogados Harisson e Grabrielle?
+      </p>
+
+      <form id="votacao-form">
+        <div class="logos-grid">
+          <label class="logo-option">
+            <input type="radio" name="logo" value="Logo 1">
+            <img src="https://via.placeholder.com/300x200/143b63/ffffff?text=Logo+1" alt="Logo 1">
+            <span class="logo-label">Opção 1</span>
+            <span class="logo-desc">Símbolo abstrato com balança estilizada.</span>
+          </label>
+
+          <label class="logo-option">
+            <input type="radio" name="logo" value="Logo 2">
+            <img src="https://via.placeholder.com/300x200/2c5f8d/ffffff?text=Logo+2" alt="Logo 2">
+            <span class="logo-label">Opção 2</span>
+            <span class="logo-desc">Monograma LR em composição vertical.</span>
+          </label>
+
+          <label class="logo-option">
+            <input type="radio" name="logo" value="Logo 3">
+            <img src="https://via.placeholder.com/300x200/4a7ba7/ffffff?text=Logo+3" alt="Logo 3">
+            <span class="logo-label">Opção 3</span>
+            <span class="logo-desc">LR com livro aberto e detalhes dourados.</span>
+          </label>
+
+          <label class="logo-option">
+            <input type="radio" name="logo" value="Logo 4">
+            <img src="https://via.placeholder.com/300x200/6096c1/ffffff?text=Logo+4" alt="Logo 4">
+            <span class="logo-label">Opção 4</span>
+            <span class="logo-desc">Monograma geométrico LR com dourado.</span>
+          </label>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="nome">Nome completo do avaliador</label>
+            <input type="text" id="nome" name="nome" placeholder="Digite seu nome completo" required>
+          </div>
+
+          <div class="form-group">
+            <label for="nota">Nota de 0 a 10 para a opção escolhida</label>
+            <input type="number" id="nota" name="nota" min="0" max="10" step="0.5" placeholder="Ex.: 8.5" required>
+            <small class="hint">Use notas inteiras ou com .5 (ex.: 7, 7.5, 8).</small>
+          </div>
+        </div>
+
+        <div class="actions">
+          <button type="submit" class="btn-primary" id="btn-submit">Registrar voto</button>
+          <span id="mensagem" class="message"></span>
+        </div>
+      </form>
+    </div>
+
+    <div id="relatorio" class="card">
+      <div class="report-header">
+        <h2 style="margin:0; font-size:1.2rem; color:#143b63;">Relatório em tempo real da votação</h2>
+        <button class="btn-secondary" onclick="carregarRelatorio()">🔄 Atualizar</button>
+      </div>
+      <small class="hint" id="total-votos-info"></small>
+
+      <div class="report-grid" id="report-grid"></div>
+
+      <details>
+        <summary>Ver lista completa de votos</summary>
+        <div id="tabela-votos-wrapper"></div>
+      </details>
+    </div>
+  </div>
+
+  <script>
+    const API_URL = '/api'; // Será ajustado para a URL do seu backend na Vercel
+
+    const form = document.getElementById("votacao-form");
+    const mensagemEl = document.getElementById("mensagem");
+    const relatorioEl = document.getElementById("relatorio");
+    const reportGridEl = document.getElementById("report-grid");
+    const totalVotosInfoEl = document.getElementById("total-votos-info");
+    const tabelaVotosWrapperEl = document.getElementById("tabela-votos-wrapper");
+    const btnSubmit = document.getElementById("btn-submit");
+
+    // Destaque visual da opção selecionada
+    document.querySelectorAll(".logo-option input[type='radio']").forEach(radio => {
+      radio.addEventListener("change", () => {
+        document.querySelectorAll(".logo-option").forEach(opt => opt.classList.remove("selected"));
+        radio.closest(".logo-option").classList.add("selected");
+      });
+    });
+
+    // Envio do formulário
+    form.addEventListener("submit", async function (event) {
+      event.preventDefault();
+
+      const nome = document.getElementById("nome").value.trim();
+      const notaStr = document.getElementById("nota").value.trim();
+      const logoSelecionada = document.querySelector("input[name='logo']:checked");
+
+      if (!nome || !logoSelecionada || !notaStr) {
+        showMessage("Por favor, preencha todos os campos.", true);
+        return;
+      }
+
+      const nota = parseFloat(notaStr.replace(",", "."));
+      if (isNaN(nota) || nota < 0 || nota > 10) {
+        showMessage("A nota deve ser um número entre 0 e 10.", true);
+        return;
+      }
+
+      // Desabilita botão e mostra loading
+      btnSubmit.disabled = true;
+      btnSubmit.innerHTML = '<span class="loading"></span> Enviando...';
+
+      try {
+        const response = await fetch(`${API_URL}/votos`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            nome,
+            logo: logoSelecionada.value,
+            nota
+          })
+        });
+
+        if (!response.ok) throw new Error('Erro ao registrar voto');
+
+        // Limpa formulário
+        document.getElementById("nome").value = "";
+        document.getElementById("nota").value = "";
+        document.querySelectorAll(".logo-option").forEach(opt => opt.classList.remove("selected"));
+        form.reset();
+
+        showMessage("✓ Voto registrado com sucesso! Obrigado pela sua contribuição.", false);
+
+        // Carrega relatório atualizado
+        await carregarRelatorio();
+
+      } catch (error) {
+        showMessage("Erro ao registrar voto. Tente novamente.", true);
+        console.error(error);
+      } finally {
+        btnSubmit.disabled = false;
+        btnSubmit.textContent = 'Registrar voto';
+      }
+    });
+
+    function showMessage(texto, isError) {
+      mensagemEl.textContent = texto;
+      mensagemEl.classList.toggle("error", isError);
+      mensagemEl.classList.toggle("success", !isError);
+
+      setTimeout(() => {
+        mensagemEl.textContent = "";
+      }, 5000);
+    }
+
+    async function carregarRelatorio() {
+      try {
+        const response = await fetch(`${API_URL}/votos`);
+        if (!response.ok) throw new Error('Erro ao carregar votos');
+
+        const votos = await response.json();
+
+        if (votos.length === 0) {
+          relatorioEl.style.display = "none";
+          return;
+        }
+
+        relatorioEl.style.display = "block";
+
+        const logos = ["Logo 1", "Logo 2", "Logo 3", "Logo 4"];
+        const estatisticas = {};
+
+        logos.forEach(l => {
+          estatisticas[l] = { totalVotos: 0, somaNotas: 0, nomes: [] };
+        });
+
+        votos.forEach(v => {
+          const e = estatisticas[v.logo];
+          e.totalVotos++;
+          e.somaNotas += v.nota;
+          e.nomes.push({ nome: v.nome, nota: v.nota });
+        });
+
+        totalVotosInfoEl.textContent = `Total de votos registrados: ${votos.length}`;
+
+        // Cards de resumo
+        reportGridEl.innerHTML = "";
+        logos.forEach((logo, index) => {
+          const stats = estatisticas[logo];
+          const media = stats.totalVotos > 0 ? (stats.somaNotas / stats.totalVotos).toFixed(2) : "-";
+
+          const card = document.createElement("div");
+          card.className = "report-card";
+
+          const opcaoTexto = `Opção ${index + 1}`;
+          card.innerHTML = `
+            <div class="report-title">${opcaoTexto} (${logo})</div>
+            <div class="report-metric">Votos: <span>${stats.totalVotos}</span></div>
+            <div class="report-metric">Média das notas: <span>${media}</span></div>
+            <details ${stats.totalVotos === 0 ? "" : ""}>
+              <summary>Ver quem votou nesta opção</summary>
+              ${stats.totalVotos === 0
+                ? "<p style='font-size:0.8rem; margin-top:4px; color:#777;'>Ainda não há votos nesta opção.</p>"
+                : "<ul style='margin:6px 0 0 14px; padding:0; font-size:0.84rem;'>" +
+                  stats.nomes
+                    .map(p => `<li>${escapeHtml(p.nome)} — nota ${p.nota}</li>`)
+                    .join("") +
+                  "</ul>"
+              }
+            </details>
+          `;
+          reportGridEl.appendChild(card);
+        });
+
+        // Tabela completa
+        let tabelaHTML = `
+          <table>
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Nome</th>
+                <th>Logomarca</th>
+                <th>Nota</th>
+                <th>Data/Hora</th>
+              </tr>
+            </thead>
+            <tbody>
+        `;
+        votos.forEach((v, i) => {
+          const data = new Date(v.createdAt).toLocaleString('pt-BR');
+          tabelaHTML += `
+            <tr>
+              <td>${i + 1}</td>
+              <td>${escapeHtml(v.nome)}</td>
+              <td>${v.logo}</td>
+              <td>${v.nota}</td>
+              <td>${data}</td>
+            </tr>
+          `;
+        });
+        tabelaHTML += "</tbody></table>";
+        tabelaVotosWrapperEl.innerHTML = tabelaHTML;
+
+      } catch (error) {
+        console.error('Erro ao carregar relatório:', error);
+      }
+    }
+
+    function escapeHtml(text) {
+      return text
+        .replace(/&/g, "&")
+        .replace(/</g, "<")
+        .replace(/>/g, ">")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+    }
+
+    // Carrega relatório ao abrir a página
+    carregarRelatorio();
+  </script>
+</body>
+</html>
