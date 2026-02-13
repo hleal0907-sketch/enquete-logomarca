@@ -55,9 +55,15 @@
 
     .logos-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+      grid-template-columns: repeat(4, 1fr);
       gap: 18px;
       margin-bottom: 10px;
+    }
+
+    @media (max-width: 768px) {
+      .logos-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
     }
 
     .logo-option {
@@ -304,6 +310,8 @@
       }
     }
   </style>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
   <div class="page">
@@ -320,33 +328,33 @@
 
       <form id="votacao-form">
         <div class="logos-grid">
-          <<label class="logo-option">
-  <input type="radio" name="logo" value="Logo 1">
-  <img src="./logo1.jpeg" alt="Logo 1 - Leal & Rodrigues">
-  <span class="logo-label">Opção 1</span>
-  <span class="logo-desc">Símbolo abstrato com balança estilizada.</span>
-</label>
+          <label class="logo-option">
+            <input type="radio" name="logo" value="Logo 1">
+            <img src="./logo1.jpeg" alt="Logo 1 - Leal & Rodrigues">
+            <span class="logo-label">Opção 1</span>
+            <span class="logo-desc">Símbolo abstrato com balança estilizada.</span>
+          </label>
 
-<label class="logo-option">
-  <input type="radio" name="logo" value="Logo 2">
-  <img src="./logo2.jpeg" alt="Logo 2 - Leal & Rodrigues">
-  <span class="logo-label">Opção 2</span>
-  <span class="logo-desc">Monograma LR em composição vertical.</span>
-</label>
+          <label class="logo-option">
+            <input type="radio" name="logo" value="Logo 2">
+            <img src="./logo2.jpeg" alt="Logo 2 - Leal & Rodrigues">
+            <span class="logo-label">Opção 2</span>
+            <span class="logo-desc">Monograma LR em composição vertical.</span>
+          </label>
 
-<label class="logo-option">
-  <input type="radio" name="logo" value="Logo 3">
-  <img src="./logo3.jpeg" alt="Logo 3 - Leal & Rodrigues">
-  <span class="logo-label">Opção 3</span>
-  <span class="logo-desc">LR com livro aberto e detalhes dourados.</span>
-</label>
+          <label class="logo-option">
+            <input type="radio" name="logo" value="Logo 3">
+            <img src="./logo3.jpeg" alt="Logo 3 - Leal & Rodrigues">
+            <span class="logo-label">Opção 3</span>
+            <span class="logo-desc">LR com livro aberto e detalhes dourados.</span>
+          </label>
 
-<label class="logo-option">
-  <input type="radio" name="logo" value="Logo 4">
-  <img src="./logo4.jpeg" alt="Logo 4 - Leal & Rodrigues">
-  <span class="logo-label">Opção 4</span>
-  <span class="logo-desc">Monograma geométrico LR com dourado.</span>
-</label>
+          <label class="logo-option">
+            <input type="radio" name="logo" value="Logo 4">
+            <img src="./logo4.jpeg" alt="Logo 4 - Leal & Rodrigues">
+            <span class="logo-label">Opção 4</span>
+            <span class="logo-desc">Monograma geométrico LR com dourado.</span>
+          </label>
         </div>
 
         <div class="form-row">
@@ -376,6 +384,11 @@
       </div>
       <small class="hint" id="total-votos-info"></small>
 
+      <!-- Gráfico de barras -->
+      <div style="margin-top: 16px; margin-bottom: 12px;">
+        <canvas id="chart-votos" height="100"></canvas>
+      </div>
+
       <div class="report-grid" id="report-grid"></div>
 
       <details>
@@ -386,7 +399,7 @@
   </div>
 
   <script>
-    const API_URL = '/api'; // Será ajustado para a URL do seu backend na Vercel
+    const API_URL = '/api';
 
     const form = document.getElementById("votacao-form");
     const mensagemEl = document.getElementById("mensagem");
@@ -396,29 +409,31 @@
     const tabelaVotosWrapperEl = document.getElementById("tabela-votos-wrapper");
     const btnSubmit = document.getElementById("btn-submit");
 
+    let chartVotos = null;
+
     // Permitir trocar de opção e também desmarcar clicando de novo na mesma
-const radioButtons = document.querySelectorAll(".logo-option input[type='radio']");
-let ultimoRadioClicado = null;
+    const radioButtons = document.querySelectorAll(".logo-option input[type='radio']");
+    let ultimoRadioClicado = null;
 
-radioButtons.forEach(radio => {
-  // Destacar visualmente quando a seleção muda
-  radio.addEventListener("change", () => {
-    document.querySelectorAll(".logo-option").forEach(opt => opt.classList.remove("selected"));
-    radio.closest(".logo-option").classList.add("selected");
-  });
+    radioButtons.forEach(radio => {
+      // Destacar visualmente quando a seleção muda
+      radio.addEventListener("change", () => {
+        document.querySelectorAll(".logo-option").forEach(opt => opt.classList.remove("selected"));
+        radio.closest(".logo-option").classList.add("selected");
+      });
 
-  // Lidar com clique para permitir "desmarcar"
-  radio.addEventListener("click", (event) => {
-    if (ultimoRadioClicado === event.target) {
-      // Se clicar de novo no mesmo radio, desmarca
-      event.target.checked = false;
-      ultimoRadioClicado = null;
-      document.querySelectorAll(".logo-option").forEach(opt => opt.classList.remove("selected"));
-    } else {
-      ultimoRadioClicado = event.target;
-    }
-  });
-});
+      // Lidar com clique para permitir "desmarcar"
+      radio.addEventListener("click", (event) => {
+        if (ultimoRadioClicado === event.target) {
+          // Se clicar de novo no mesmo radio, desmarca
+          event.target.checked = false;
+          ultimoRadioClicado = null;
+          document.querySelectorAll(".logo-option").forEach(opt => opt.classList.remove("selected"));
+        } else {
+          ultimoRadioClicado = event.target;
+        }
+      });
+    });
 
     // Envio do formulário
     form.addEventListener("submit", async function (event) {
@@ -461,6 +476,7 @@ radioButtons.forEach(radio => {
         document.getElementById("nota").value = "";
         document.querySelectorAll(".logo-option").forEach(opt => opt.classList.remove("selected"));
         form.reset();
+        ultimoRadioClicado = null;
 
         showMessage("✓ Voto registrado com sucesso! Obrigado pela sua contribuição.", false);
 
@@ -515,6 +531,9 @@ radioButtons.forEach(radio => {
         });
 
         totalVotosInfoEl.textContent = `Total de votos registrados: ${votos.length}`;
+
+        // Atualiza gráfico de total de votos
+        atualizarGraficoVotos(logos, estatisticas);
 
         // Cards de resumo
         reportGridEl.innerHTML = "";
@@ -577,6 +596,71 @@ radioButtons.forEach(radio => {
       } catch (error) {
         console.error('Erro ao carregar relatório:', error);
       }
+    }
+
+    function atualizarGraficoVotos(logos, estatisticas) {
+      const ctx = document.getElementById('chart-votos');
+      if (!ctx) return;
+
+      const labels = logos.map((logo, i) => `Opção ${i + 1}`);
+      const dados = logos.map(logo => estatisticas[logo].totalVotos);
+
+      // Destroi gráfico antigo, se existir (para não criar vários)
+      if (chartVotos) {
+        chartVotos.destroy();
+      }
+
+      chartVotos = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels,
+          datasets: [{
+            label: 'Total de votos',
+            data: dados,
+            backgroundColor: [
+              '#143b63',
+              '#2c5f8d',
+              '#4a7ba7',
+              '#6096c1'
+            ],
+            borderRadius: 6,
+            borderSkipped: false
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              display: false
+            },
+            tooltip: {
+              callbacks: {
+                label: (context) => `${context.parsed.y} voto(s)`
+              }
+            }
+          },
+          scales: {
+            y: {
+              beginAtZero: true,
+              ticks: {
+                precision: 0,
+                stepSize: 1
+              },
+              title: {
+                display: true,
+                text: 'Quantidade de votos'
+              }
+            },
+            x: {
+              title: {
+                display: true,
+                text: 'Opções de logomarca'
+              }
+            }
+          }
+        }
+      });
     }
 
     function escapeHtml(text) {
